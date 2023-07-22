@@ -3,6 +3,17 @@ import "./App.css";
 
 import { useState } from "react";
 
+const Button = ({ handleClick, text }) => {
+  return <button onClick={handleClick}>{text}</button>;
+};
+const StatisticLine = ({ text, value }) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  );
+};
 const Statistics = ({ good, neutral, bad, totalVotes }) => {
   return (
     <div>
@@ -12,30 +23,18 @@ const Statistics = ({ good, neutral, bad, totalVotes }) => {
       ) : (
         <table>
           <tbody>
-            <tr>
-              <td>good</td>
-              <td>{good}</td>
-            </tr>
-            <tr>
-              <td>neutral</td>
-              <td>{neutral}</td>
-            </tr>
-            <tr>
-              <td>bad</td>
-              <td>{bad}</td>
-            </tr>
-            <tr>
-              <td>totalVotes</td>
-              <td>{totalVotes}</td>
-            </tr>
-            <tr>
-              <td>average</td>
-              <td>{(good - bad) / totalVotes}</td>
-            </tr>
-            <tr>
-              <td>positive</td>
-              <td>{((good / totalVotes) * 100).toFixed(2)}%</td>
-            </tr>
+            <StatisticLine text="good" value={good} />
+            <StatisticLine text="neutral" value={neutral} />
+            <StatisticLine text="bad" value={bad} />
+            <StatisticLine text="totalVotes" value={totalVotes} />
+            <StatisticLine
+              text="average"
+              value={((good - bad) / totalVotes).toFixed(2)}
+            />
+            <StatisticLine
+              text="neutral"
+              value={`${((good / totalVotes) * 100).toFixed(2)} %`}
+            />
           </tbody>
         </table>
       )}
@@ -69,9 +68,9 @@ function App() {
     <div className="">
       <h4>give feedback</h4>
       <div>
-        <button onClick={voteGood}>good</button>
-        <button onClick={voteNeutral}>neutral</button>
-        <button onClick={voteBad}>bad</button>
+        <Button handleClick={voteGood} text="good" />
+        <Button handleClick={voteNeutral} text="neutral" />
+        <Button handleClick={voteBad} text="bad" />
       </div>
       <Statistics
         good={good}
