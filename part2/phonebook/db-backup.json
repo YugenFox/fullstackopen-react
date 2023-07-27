@@ -1,0 +1,34 @@
+{
+  "persons": [
+    {
+      "name": "Terry Man",
+      "number": "55-23-6423122",
+      "importance": true,
+      "id": 1
+    },
+    {
+      "name": "Ada Lovelace",
+      "number": "39-44-5323523",
+      "importance": true,
+      "id": 2
+    },
+    {
+      "name": "Dan Abramov",
+      "number": "12-43-234345",
+      "importance": true,
+      "id": 3
+    },
+    {
+      "name": "Mary Poppendieck",
+      "number": "39-23-6423122",
+      "importance": true,
+      "id": 4
+    },
+    {
+      "name": "t",
+      "number": "",
+      "importance": true,
+      "id": 5
+    }
+  ]
+}

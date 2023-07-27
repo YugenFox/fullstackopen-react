@@ -3,7 +3,8 @@ import SearchFilter from "./components/SearchFilter";
 import AddPerson from "./components/AddPerson";
 import Numbers from "./components/Numbers";
 
-import axios from "axios"
+//handles our axios stuff to talk to json server
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -19,19 +20,21 @@ const App = () => {
 
   //set initial persons State with db.json using json-server
   useEffect(() => {
-    console.log("effect")
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        console.log("promise fulfilled")
-        console.log(response)
-        setPersons(response.data)
-      })
-  }, [])
+    console.log("effect");
+    // axios.get("http://localhost:3001/persons").then((response) => {
+    //   console.log("promise fulfilled");
+    //   console.log(response);
+    //   setPersons(response.data);
+    // });
+    personService.getAll().then((initialPersons) => {
+      console.log("promise fulfilled");
+      console.log(initialPersons);
+      setPersons(initialPersons);
+    });
+  }, []);
 
   const addName = (event) => {
     event.preventDefault();
-
     const clearForm = () => {
       setNewName("");
       setNewNumber("");
@@ -41,27 +44,88 @@ const App = () => {
     const nameEntry = {
       name: newName,
       number: newNumber,
+      importance: true,
     };
-    // check if name already exists in persons
+    // check if name/number already exists in persons
+    //has popup asking if they want to update the exiting name they input with a new number
     const nameExists = persons.some((person) => person.name === newName);
     if (nameExists) {
-      alert(`${newName} already exists, exiting`);
-      clearForm();
-      return;
-    }
-    const numberExists = persons.some((person) => person.number === newNumber);
-    if (numberExists) {
-      alert(`Number ${newNumber} already exists, exiting`);
-      clearForm();
-      return;
-    }
+      if (
+        window.confirm(
+          `${nameEntry.name} already exists, update their number with a new one?`
+        )
+      ) {
+        const sameName = persons.find(
+          (person) => person.name === nameEntry.name
+        );
+        const sameNameNewNumber = { ...sameName, number: nameEntry.number };
+        console.log(sameName, "same name");
 
-    setPersons(persons.concat(nameEntry));
-    clearForm();
+        personService
+          .update(sameName.id, sameNameNewNumber)
+          .then((changedName) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === changedName.id ? changedName : person
+              )
+            );
+          })
+          .catch((error) => {
+            console.log(`issue adding sameName`);
+          });
+      }
+      clearForm();
+      return;
+    }
+    // const numberExists = persons.some((person) => person.number === newNumber);
+    // if (numberExists) {
+    //   alert(`Number ${newNumber} already exists, exiting`);
+    //   clearForm();
+    //   return;
+    // }
+
+    personService.create(nameEntry).then((returnedNote) => {
+      setPersons(persons.concat(returnedNote));
+      clearForm();
+    });
+
     //show full form on button click
     // console.log("e.target", event.target)
     //the first element is the input so it would show what the value= in there
     // console.log('button clicked', event.target.elements[0].value)
+  };
+
+  const removePerson = (id, name) => () => {
+    if (window.confirm(`Do you want to delete ${name}`)) {
+      console.log(`try removing ${name}`);
+      personService
+        .remove(id)
+        .then((removedPerson) => {
+          console.log(`Removed ${removedPerson}`);
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((error) => {
+          alert(`already removed user ${name} from server`);
+        });
+    }
+  };
+
+  const toggleImportanceOf = (id) => () => {
+    console.log(`The id of ${id} needs to be toggled`);
+    const person = persons.find((person) => person.id === id);
+    console.log("personToggled", person);
+    const updatedPerson = { ...person, importance: !person.importance };
+    console.log("updPerson", updatedPerson);
+
+    personService.update(id, updatedPerson).then((changedPerson) => {
+      setPersons(
+        persons.map((person) => (person.id === id ? changedPerson : person))
+      );
+    });
+
+    // personService.update(id, updatedPerson).then(response =>{
+    //   console.log(`id ${id} updPerson: ${updatedPerson}`)
+    // })
   };
 
   const updateName = (event) => {
@@ -95,7 +159,11 @@ const App = () => {
         newNumber={newNumber}
         updateNumber={updateNumber}
       />
-      <Numbers shownPeople={shownPeople} />
+      <Numbers
+        shownPeople={shownPeople}
+        toggleImportance={toggleImportanceOf}
+        removePerson={removePerson}
+      />
     </div>
   );
 };
