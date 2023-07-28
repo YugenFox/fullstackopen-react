@@ -1,0 +1,14 @@
+sequenceDiagram
+    title Adding a new note
+    participant browser
+    participant server
+
+    browser->>server: press Submit /new_note sends input field text in form- https://studies.cs.helsinki.fi/exampleapp/new_note method="POST" 
+    activate server
+    server-->>browser: respondes withHTTP status code 302, URL redirect, asks the browser to do HTTP GET request to the address defined in the header's Location - the address notes.
+    deactivate server
+    browser->>server: request https://studies.cs.helsinki.fi/exampleapp/notes ,reloading the browser. The reload causes three more HTTP requests: fetching the style sheet (main.css), the JavaScript code (main.js), and the raw data of the notes (data.json).
+    activate server
+    server->>browser: sends back all the 3 http request with Header-Form Data-note stating for data had been sent with HTTP POST (now in Payload tab in chrome)
+
+   

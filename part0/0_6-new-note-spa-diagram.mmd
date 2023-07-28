@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+    title new note SPA (single-paged-app)
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/spa
+    activate server
+    server-->>browser: application/json
+    deactivate server
+    Note right of browser: response is a payload of the note added to the server
+
+    
