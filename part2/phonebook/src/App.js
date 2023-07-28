@@ -77,12 +77,13 @@ const App = () => {
       clearForm();
       return;
     }
-    // const numberExists = persons.some((person) => person.number === newNumber);
-    // if (numberExists) {
-    //   alert(`Number ${newNumber} already exists, exiting`);
-    //   clearForm();
-    //   return;
-    // }
+    //Checks if number already exists in persons
+      // const numberExists = persons.some((person) => person.number === newNumber);
+      // if (numberExists) {
+      //   alert(`Number ${newNumber} already exists, exiting`);
+      //   clearForm();
+      //   return;
+      // }
 
     personService.create(nameEntry).then((returnedNote) => {
       setPersons(persons.concat(returnedNote));
