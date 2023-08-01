@@ -5,6 +5,7 @@ import Numbers from "./components/Numbers";
 
 //handles our axios stuff to talk to json server
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -17,6 +18,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterPersons, setFilterPersons] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   //set initial persons State with db.json using json-server
   useEffect(() => {
@@ -73,21 +75,30 @@ const App = () => {
           .catch((error) => {
             console.log(`issue adding sameName`);
           });
+
+        setNotificationMessage(`Name ${nameEntry.name}'s number was updated to ${nameEntry.number}`);
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
       }
       clearForm();
       return;
     }
     //Checks if number already exists in persons
-      // const numberExists = persons.some((person) => person.number === newNumber);
-      // if (numberExists) {
-      //   alert(`Number ${newNumber} already exists, exiting`);
-      //   clearForm();
-      //   return;
-      // }
+    // const numberExists = persons.some((person) => person.number === newNumber);
+    // if (numberExists) {
+    //   alert(`Number ${newNumber} already exists, exiting`);
+    //   clearForm();
+    //   return;
+    // }
 
     personService.create(nameEntry).then((returnedNote) => {
       setPersons(persons.concat(returnedNote));
       clearForm();
+      setNotificationMessage(`Name ${nameEntry.name} was added to the server`);
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
     });
 
     //show full form on button click
@@ -148,6 +159,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification text={notificationMessage} />
 
       <SearchFilter
         filterPersons={filterPersons}
