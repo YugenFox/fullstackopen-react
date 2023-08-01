@@ -19,6 +19,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterPersons, setFilterPersons] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationIsError, setNotificationIsError] = useState(false)
 
   //set initial persons State with db.json using json-server
   useEffect(() => {
@@ -74,9 +75,21 @@ const App = () => {
           })
           .catch((error) => {
             console.log(`issue adding sameName`);
+            setNotificationMessage(
+              `Name ${nameEntry.name}'s information has already been removed from the server. Please refresh the page to add them as a new entry`
+            );
+            setNotificationIsError(true)
+            setTimeout(() => {
+              setNotificationMessage(null);
+              setNotificationIsError(false)
+            }, 5000);
+            // return and tell them to try again(create new person from scratch), since are not updating a person still in the system as they suspected
+            // clearForm() setNotMess to null
           });
 
-        setNotificationMessage(`Name ${nameEntry.name}'s number was updated to ${nameEntry.number}`);
+        setNotificationMessage(
+          `Name ${nameEntry.name}'s number was updated to ${nameEntry.number}`
+        );
         setTimeout(() => {
           setNotificationMessage(null);
         }, 5000);
@@ -159,7 +172,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification text={notificationMessage} />
+      <Notification text={notificationMessage} isErrorMessage={notificationIsError}/>
 
       <SearchFilter
         filterPersons={filterPersons}
