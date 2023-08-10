@@ -13,6 +13,7 @@ function App() {
     console.log(event.target.value);
   };
   const [countries, setCountries] = useState([]);
+  const [filteredCountries, setFilteredCountries] = useState([]);
   // get all country data
   useEffect(() => {
     countriesService
@@ -26,7 +27,7 @@ function App() {
       });
   }, []);
 
-  let filteredCountries = [];
+  // let filteredCountries = [];
   useEffect(() => {
     console.log(`effect run, search is now`, search);
     //skip if search is not defined
@@ -36,12 +37,12 @@ function App() {
       // filteredCountries = countries.filter((country) =>
       //   country.name.toLowerCase().includes(search.toLowerCase())
       // );
-      filteredCountries = countries[0]
 
-      filteredCountries = countries.filter((country) =>
-      country.name.common.toLowerCase().includes(search.toLowerCase())
-    );
-      console.log("filtered list", filteredCountries);
+      let filterData = countries.filter((country) =>
+        country.name.common.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredCountries(filterData);
+      console.log("filtered list", filterData);
     }
     //do a countryService.getAll()
     //filter conditions **
@@ -58,17 +59,22 @@ function App() {
     content = <CountryList countries={filteredCountries} />;
   } else if (filteredCountries.length === 1) {
     const country = filteredCountries[0];
+
+    // Extract the language values from the object and join them
+    const languages = Object.values(country.languages).join(", ");
+    // Extract the common name from the name object
+    const countryName = country.name.common;
     content = (
       <div>
-        <h2>{country.name}</h2>
+        <h2>{countryName}</h2>
         <p>Capital: {country.capital}</p>
         <p>Area: {country.area}</p>
-        <p>Languages: {country.languages.join(", ")}</p>
-        <img src={country.flag} alt={`${country.name} flag`} />
+        <p>Languages: {languages}</p>
+        <img src={country.flags.svg} alt={`${country.name} flag`} />
       </div>
     );
   } else {
-    content = <div>No matching countries found</div>;
+    content = <div>No matching countries found {filteredCountries}</div>;
   }
 
   return (
@@ -82,6 +88,7 @@ function App() {
           placeholder="search for country data"
         ></input>
       </form>
+      {content}
     </div>
   );
 }
