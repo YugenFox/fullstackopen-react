@@ -1,0 +1,23 @@
+/* CountryData.css */
+
+.country-data {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.country-data h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.country-data p {
+  margin-bottom: 5px;
+}
+
+.country-data img {
+  max-width: 100%; /* Set the maximum width */
+  max-height: 200px; /* Set the maximum height */
+  display: block;
+  margin-top: 10px;
+}

@@ -1,14 +1,18 @@
+import "./CountryData.css";
+
 const CountryData = ({ country, showCountryView, toggleView }) => {
   // Extract the language values from the object and join them
   const languages = Object.values(country.languages).join(", ");
 
   return (
-    <div>
+    <div className="country-data">
       <h2>
         {country.name.common}{" "}
-        <button onClick={toggleView}>
-          {showCountryView ? "hide" : "show"}
-        </button>
+        {showCountryView && (
+          <button onClick={toggleView}>
+            {showCountryView ? "hide" : "show"}
+          </button>
+        )}
       </h2>
       <p>Capital: {country.capital}</p>
       <p>Area: {country.area}</p>
