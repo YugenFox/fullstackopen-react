@@ -57,8 +57,9 @@ function App() {
     // content = <CountryList countries={filteredCountries} />;
     content = <CountryList countries={filteredCountries} />;
   } else if (filteredCountries.length === 1) {
-    const country = filteredCountries[0];
-    content = <CountryData country={country} />;
+    // const country = filteredCountries[0];
+    // content = <CountryData country={country} />;
+    content = <CountryList countries={filteredCountries} />;
   } else {
     content = <div>No matching countries found {filteredCountries}</div>;
   }

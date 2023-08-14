@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CountryData from "./CountryData";
 
-const CountryView = ({ country }) => {
+const CountryView = ({ country, weatherData }) => {
   const [showCountryView, setShowCountryView] = useState(false);
   const toggleView = () => {
     setShowCountryView(!showCountryView);
@@ -13,6 +13,7 @@ const CountryView = ({ country }) => {
       {showCountryView ? (
         <CountryData
           country={country}
+          weatherData={weatherData}
           showCountryView={showCountryView}
           toggleView={toggleView}
         />
