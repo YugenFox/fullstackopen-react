@@ -25,6 +25,7 @@ let phonebook = [
     },
   ],
 ];
+let currentDate = new Date()
 
 //routing for webpages and what to call
 app.get("/", (request, response) => {
@@ -33,6 +34,13 @@ app.get("/", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   response.json(phonebook);
+});
+
+app.get("/info", (request, response) => {
+  response.send(
+  `<p>Phonebook has info for ${phonebook[0].length} people</p>
+  <p>${currentDate}</p>
+  `);
 });
 
 //setting port for local host
