@@ -73,6 +73,17 @@ app.post("/api/persons/", (request, response) => {
   const body = request.body
   console.log(body, "body")
   const id = Math.floor(Math.random() * (10000))
+
+  //must have name & number or return error
+  if(!body.name || !body.number){
+    return response.status(400).json({error: "Name and number are required"})
+  }
+  //check if person with same name already exists
+  const nameExists = phonebook[0].some((person) => person.name === body.name)
+  if(nameExists){
+    return response.status(400).json({error: "Name already exist in phonebook"})
+  }
+
   // const name = "Tyler Chesty"
   // const number = "999-999-9999"
 
@@ -90,7 +101,7 @@ app.post("/api/persons/", (request, response) => {
 
   phonebook[0].push(person)
   
-  //render on screen
+  //render on screen new person
   response.json(person)
 })
 
