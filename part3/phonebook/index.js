@@ -25,22 +25,37 @@ let phonebook = [
     },
   ],
 ];
-let currentDate = new Date()
+let currentDate = new Date();
 
 //routing for webpages and what to call
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
 });
 
-app.get("/api/persons", (request, response) => {
+app.get("/api/persons/", (request, response) => {
   response.json(phonebook);
+});
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id); //convert id to a number
+  const personArray = phonebook[0]; //get inner array of persons
+  const person = personArray.find((p) => p.id === id); //find person with that id
+
+  if (person) {
+    console.log("this person found")
+    response.json(person);
+  } else {
+    console.log(`Person with id ${id} not found`)
+    response.status(404).end()
+  }
 });
 
 app.get("/info", (request, response) => {
   response.send(
-  `<p>Phonebook has info for ${phonebook[0].length} people</p>
+    `<p>Phonebook has info for ${phonebook[0].length} people</p>
   <p>${currentDate}</p>
-  `);
+  `
+  );
 });
 
 //setting port for local host
