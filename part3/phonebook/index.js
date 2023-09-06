@@ -58,6 +58,14 @@ app.get("/info", (request, response) => {
   );
 });
 
+//deleting
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id)
+  phonebook[0] = phonebook[0].filter((p) => p.id !== id)
+
+  response.status(204).end()
+})
+
 //setting port for local host
 const PORT = 3001;
 app.listen(PORT, () => {
