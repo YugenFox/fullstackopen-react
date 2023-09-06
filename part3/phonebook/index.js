@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json()); //lets us use POST
+
 let phonebook = [
   [
     {
@@ -64,6 +66,32 @@ app.delete("/api/persons/:id", (request, response) => {
   phonebook[0] = phonebook[0].filter((p) => p.id !== id)
 
   response.status(204).end()
+})
+
+//post / adding
+app.post("/api/persons/", (request, response) => {
+  const body = request.body
+  console.log(body, "body")
+  const id = Math.floor(Math.random() * (10000))
+  // const name = "Tyler Chesty"
+  // const number = "999-999-9999"
+
+  // const person = {
+  //   id: id,
+  //   name: name,
+  //   number: number
+  // }
+  const person = {
+    id: id,
+    name: body.name,
+    number: body.number
+  }
+  //add new person to phonebook
+
+  phonebook[0].push(person)
+  
+  //render on screen
+  response.json(person)
 })
 
 //setting port for local host
