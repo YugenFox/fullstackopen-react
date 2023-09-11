@@ -1,10 +1,13 @@
 const express = require("express");
 const morgan = require("morgan")
 const app = express();
+const cors = require("cors")
 
 app.use(express.json())
 // Use the 'tiny' format for most requests
 app.use(morgan('tiny'));
+//lets backend and frontend interact from different origins
+app.use(cors())
 
 // Create a custom token for logging request body for POST requests
 morgan.token('post-data', (req) => {
