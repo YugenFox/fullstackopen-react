@@ -8,6 +8,12 @@ app.use(express.json())
 app.use(morgan('tiny'));
 //lets backend and frontend interact from different origins
 app.use(cors())
+/* 
+whenever express gets an HTTP GET request it will first check if the 'build' directory contains a file corresponding to the request's address. If a correct file is found, express will return it.
+
+Now HTTP GET requests to the address www.serversaddress.com/index.html or www.serversaddress.com will show the React frontend. GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
+*/
+app.use(express.static('build'))
 
 // Create a custom token for logging request body for POST requests
 morgan.token('post-data', (req) => {
@@ -105,7 +111,8 @@ app.post("/api/persons", (req, res) => {
 })
 
 //port to listen to
-const PORT = 3001;
+// const PORT = 3001;
+const PORT = process.env.PORT || 3001 //is what fly.io or Render needs 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
