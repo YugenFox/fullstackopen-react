@@ -126,7 +126,7 @@ const App = () => {
       personService
         .remove(id)
         .then((removedPerson) => {
-          console.log(`Removed ${name}`);
+          console.log(`Removed ${removedPerson.name}`);
           setPersons(persons.filter((person) => person.id !== id));
         })
         .catch((error) => {
