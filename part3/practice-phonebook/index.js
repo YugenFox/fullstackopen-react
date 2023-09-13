@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const morgan = require("morgan")
 const app = express();
@@ -31,34 +32,15 @@ app.use(
 );
 
 const currentDate = new Date()
+//brings in mongoose Person model from modules folder, lets us connect to mongoDB data stored online
+const Person = require('./models/person')
 
-let phonebook = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
-//GET
-app.get("/api/persons", (req, res) => {
-  res.json(phonebook);
-});
+//GET with mongoDB
+app.get('/api/persons', (req, res) => {
+  Person.find({}).then((persons) => {
+    res.json(persons)
+  })
+})
 
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${phonebook.length} people</p>
@@ -112,7 +94,35 @@ app.post("/api/persons", (req, res) => {
 
 //port to listen to
 // const PORT = 3001;
-const PORT = process.env.PORT || 3001 //is what fly.io or Render needs 
+const PORT = process.env.PORT //process.env.PORT is what fly.io or Render needs 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// let phonebook = [
+//   {
+//     id: 1,
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//   },
+//   {
+//     id: 2,
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//   },
+//   {
+//     id: 3,
+//     name: "Dan Abramov",
+//     number: "12-43-234345",
+//   },
+//   {
+//     id: 4,
+//     name: "Mary Poppendieck",
+//     number: "39-23-6423122",
+//   },
+// ];
+
+//GET without mongoDB
+// app.get("/api/persons", (req, res) => {
+//   res.json(phonebook);
+// });
