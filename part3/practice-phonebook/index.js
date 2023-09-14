@@ -64,12 +64,13 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 //DELETE
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  phonebook = phonebook.filter((p) => p.id !== id);
-
-  res.status(204).end();
-});
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
+})
 
 //POST
 app.post("/api/persons", (req, res) => {
@@ -88,7 +89,6 @@ app.post("/api/persons", (req, res) => {
   //   return res.send({error: `name already exists in phonebook`})
   // }
 
-  // const id = Math.floor(Math.random() * 10000);
   const person = new Person({
     name: body.name,
     number: body.number,

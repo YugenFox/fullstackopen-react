@@ -19,6 +19,7 @@ const personSchema = new mongoose.Schema({
   important: Boolean,
 });
 
+//changes the object sent back from the server
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
