@@ -1,100 +1,108 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
-const morgan = require("morgan")
+const morgan = require("morgan");
 const app = express();
-const cors = require("cors")
+const cors = require("cors");
 
-app.use(express.json())
+app.use(express.json());
 // Use the 'tiny' format for most requests
-app.use(morgan('tiny'));
+app.use(morgan("tiny"));
 //lets backend and frontend interact from different origins
-app.use(cors())
+app.use(cors());
 /* 
 whenever express gets an HTTP GET request it will first check if the 'build' directory contains a file corresponding to the request's address. If a correct file is found, express will return it.
 
 Now HTTP GET requests to the address www.serversaddress.com/index.html or www.serversaddress.com will show the React frontend. GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
 */
-app.use(express.static('build'))
+app.use(express.static("build"));
 
 // Create a custom token for logging request body for POST requests
-morgan.token('post-data', (req) => {
-  if (req.method === 'POST') {
+morgan.token("post-data", (req) => {
+  if (req.method === "POST") {
     return JSON.stringify(req.body);
   }
-  return '';
+  return "";
 });
 
 // Use the custom token for POST requests
 app.use(
-  morgan(':method :url :status :res[content-length] - :response-time ms :post-data', {
-    skip: (req) => req.method !== 'POST',
-  })
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :post-data",
+    {
+      skip: (req) => req.method !== "POST",
+    }
+  )
 );
 
-const currentDate = new Date()
+const currentDate = new Date();
 //brings in mongoose Person model from modules folder, lets us connect to mongoDB data stored online
-const Person = require('./models/person')
+const Person = require("./models/person");
 
 //GET with mongoDB
-app.get('/api/persons', (req, res) => {
+app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => {
-    res.json(persons)
-  })
-})
+    res.json(persons);
+  });
+});
 
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${phonebook.length} people</p>
   <p>${currentDate}</p>`);
 });
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = phonebook.find((p)=> p.id === id)
+app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const person = phonebook.find((p) => p.id === id);
 
-  if(person){
-    console.log(`Person with id ${id} found`)
-    res.json(person)
-  }else{
-    console.log(`Person with id ${id} not found`)
-    res.status(404).end()
+  if (person) {
+    console.log(`Person with id ${id} found`);
+    res.json(person);
+  } else {
+    console.log(`Person with id ${id} not found`);
+    res.status(404).end();
   }
-})
+});
 
 //DELETE
-app.delete("/api/persons/:id", (req, res)=> {
-  const id = Number(req.params.id)
-  phonebook = phonebook.filter((p) => p.id !== id)
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  phonebook = phonebook.filter((p) => p.id !== id);
 
-  res.status(204).end()
-})
+  res.status(204).end();
+});
 
 //POST
 app.post("/api/persons", (req, res) => {
-  const body = req.body
-  //name & number is present check
-  if(!body.name || !body.number){
-    return res.send({error: `both name & number must be filled out`})
-  }
-  //name does not already exist check
-  const nameExists = phonebook.some((p)=> p.name === body.name)
-  if(nameExists){
-    return res.send({error: `name already exists in phonebook`})
+  const body = req.body;
+  console.log(body, "req.body");
+  console.log(body.content, "req.body.content");
+
+  // name & number is present check
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: `name or number is missing` });
   }
 
-  const id = Math.floor(Math.random() * 10000)
-  const person = {
-    id: id,
+  // //name does not already exist check
+  // const nameExists = phonebook.some((p)=> p.name === body.name)
+  // if(nameExists){
+  //   return res.send({error: `name already exists in phonebook`})
+  // }
+
+  // const id = Math.floor(Math.random() * 10000);
+  const person = new Person({
     name: body.name,
-    number: body.number
-  }
-  console.log(person, "new person added")
-  phonebook.push(person)
-  res.json(person)
-})
+    number: body.number,
+  });
+
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+    console.log(person, "new person added");
+  });
+});
 
 //port to listen to
 // const PORT = 3001;
-const PORT = process.env.PORT //process.env.PORT is what fly.io or Render needs 
+const PORT = process.env.PORT; //process.env.PORT is what fly.io or Render needs
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
