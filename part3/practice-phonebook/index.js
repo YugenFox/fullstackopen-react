@@ -51,16 +51,15 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = phonebook.find((p) => p.id === id);
-
-  if (person) {
-    console.log(`Person with id ${id} found`);
-    res.json(person);
-  } else {
-    console.log(`Person with id ${id} not found`);
-    res.status(404).end();
-  }
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 //DELETE
@@ -75,8 +74,8 @@ app.delete("/api/persons/:id", (req, res, next) => {
 //POST
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  console.log(body, "req.body");
-  console.log(body.content, "req.body.content");
+  console.log(body, "POST - req.body");
+  console.log(body.content, "POST - req.body.content");
 
   // name & number is present check
   if (!body.name || !body.number) {
@@ -114,6 +113,26 @@ app.put("/api/persons/:id", (req, res, next) => {
     })
     .catch((error) => next(error));
 });
+
+//handler of request with unknown endpoint
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndpoint);
+
+//handler of request with result of error(s)
+const errorHandler = (error, req, res, next) => {
+  console.log(error);
+
+  if (error.name === "CastError") {
+    return res.status(500).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+app.use(errorHandler);
+
+
 
 //port to listen to
 // const PORT = 3001;
