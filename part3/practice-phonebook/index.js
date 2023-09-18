@@ -34,7 +34,6 @@ app.use(
   )
 );
 
-const currentDate = new Date();
 //brings in mongoose Person model from modules folder, lets us connect to mongoDB data stored online
 const Person = require("./models/person");
 
@@ -46,8 +45,11 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(`<p>Phonebook has info for ${phonebook.length} people</p>
+  const currentDate = new Date();
+  Person.find({}).then((persons) => {
+    res.send(`<p>Phonebook has info for ${persons.length} people</p>
   <p>${currentDate}</p>`);
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -131,8 +133,6 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 app.use(errorHandler);
-
-
 
 //port to listen to
 // const PORT = 3001;
