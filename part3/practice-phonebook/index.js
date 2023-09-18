@@ -93,6 +93,7 @@ app.post("/api/persons", (req, res) => {
   const person = new Person({
     name: body.name,
     number: body.number,
+    important: true
   });
 
   person.save().then((savedPerson) => {
@@ -108,6 +109,7 @@ app.put("/api/persons/:id", (req, res, next) => {
   const person = {
     name: body.name,
     number: body.number,
+    important: body.important
   };
   Person.findByIdAndUpdate(req.params.id, person, { new: true })
     .then((updatedPerson) => {
@@ -141,30 +143,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// let phonebook = [
-//   {
-//     id: 1,
-//     name: "Arto Hellas",
-//     number: "040-123456",
-//   },
-//   {
-//     id: 2,
-//     name: "Ada Lovelace",
-//     number: "39-44-5323523",
-//   },
-//   {
-//     id: 3,
-//     name: "Dan Abramov",
-//     number: "12-43-234345",
-//   },
-//   {
-//     id: 4,
-//     name: "Mary Poppendieck",
-//     number: "39-23-6423122",
-//   },
-// ];
 
-//GET without mongoDB
-// app.get("/api/persons", (req, res) => {
-//   res.json(phonebook);
-// });

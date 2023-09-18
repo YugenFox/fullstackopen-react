@@ -9,7 +9,7 @@ const Numbers = ({ shownPeople, toggleImportance, removePerson }) => {
           key={person.name}
           name={person.name}
           number={person.number}
-          importance={person.importance}
+          importance={person.important}
           toggleImportance={toggleImportance}
           removePerson={removePerson}
           id={person.id}

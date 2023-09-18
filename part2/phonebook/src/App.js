@@ -47,7 +47,7 @@ const App = () => {
     const nameEntry = {
       name: newName,
       number: newNumber,
-      importance: true,
+      important: true,
     };
     // check if name/number already exists in persons
     //has popup asking if they want to update the exiting name they input with a new number
@@ -139,7 +139,7 @@ const App = () => {
     console.log(`The id of ${id} needs to be toggled`);
     const person = persons.find((person) => person.id === id);
     console.log("personToggled", person);
-    const updatedPerson = { ...person, importance: !person.importance };
+    const updatedPerson = { ...person, important: !person.important };
     console.log("updPerson", updatedPerson);
 
     personService.update(id, updatedPerson).then((changedPerson) => {
