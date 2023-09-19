@@ -74,10 +74,9 @@ app.delete("/api/persons/:id", (req, res, next) => {
 });
 
 //POST
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
-  console.log(body, "POST - req.body");
-  console.log(body.content, "POST - req.body.content");
+  console.log(body, "POST attempt - req.body");
 
   // name & number is present check
   if (!body.name || !body.number) {
@@ -93,13 +92,17 @@ app.post("/api/persons", (req, res) => {
   const person = new Person({
     name: body.name,
     number: body.number,
-    important: true
+    important: true,
   });
 
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
-    console.log(person, "new person added");
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+      console.log(person, "new person added");
+    })
+    .catch(error => next(error))
+
 });
 
 // PUT /Update
@@ -109,9 +112,9 @@ app.put("/api/persons/:id", (req, res, next) => {
   const person = {
     name: body.name,
     number: body.number,
-    important: body.important
+    important: body.important,
   };
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
@@ -126,10 +129,12 @@ app.use(unknownEndpoint);
 
 //handler of request with result of error(s)
 const errorHandler = (error, req, res, next) => {
-  console.log(error);
+  console.error(error.message);
 
   if (error.name === "CastError") {
-    return res.status(500).send({ error: "malformatted id" });
+    return res.status(400).send({ error: "malformatted id" });
+  } else if(error.name === "ValidationError"){
+    return res.status(400).send({error: error.message})
   }
 
   next(error);
@@ -142,5 +147,3 @@ const PORT = process.env.PORT; //process.env.PORT is what fly.io or Render needs
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
