@@ -19,7 +19,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterPersons, setFilterPersons] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
-  const [notificationIsError, setNotificationIsError] = useState(false)
+  const [notificationIsError, setNotificationIsError] = useState(false);
 
   //set initial persons State with db.json using json-server
   useEffect(() => {
@@ -74,14 +74,15 @@ const App = () => {
             );
           })
           .catch((error) => {
-            console.log(`issue adding sameName`);
-            setNotificationMessage(
-              `Name ${nameEntry.name}'s information has already been removed from the server. Please refresh the page to add them as a new entry`
-            );
-            setNotificationIsError(true)
+            console.log(`issue adding sameName`, error.response.data.error);
+            setNotificationMessage(`${error.response.data.error}`);
+            // setNotificationMessage(
+            //   `Name ${nameEntry.name}'s information has already been removed from the server. Please refresh the page to add them as a new entry`
+            // );
+            setNotificationIsError(true);
             setTimeout(() => {
               setNotificationMessage(null);
-              setNotificationIsError(false)
+              setNotificationIsError(false);
             }, 5000);
             // return and tell them to try again(create new person from scratch), since are not updating a person still in the system as they suspected
             // clearForm() setNotMess to null
@@ -105,14 +106,27 @@ const App = () => {
     //   return;
     // }
 
-    personService.create(nameEntry).then((returnedNote) => {
-      setPersons(persons.concat(returnedNote));
-      clearForm();
-      setNotificationMessage(`Name ${nameEntry.name} was added to the server`);
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 5000);
-    });
+    personService
+      .create(nameEntry)
+      .then((returnedNote) => {
+        setPersons(persons.concat(returnedNote));
+        clearForm();
+        setNotificationMessage(
+          `Name ${nameEntry.name} was added to the server`
+        );
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        console.log(`issue adding new person`, error.response.data.error);
+        setNotificationMessage(`${error.response.data.error}`);
+        setNotificationIsError(true);
+        setTimeout(() => {
+          setNotificationMessage(null);
+          setNotificationIsError(false);
+        }, 5000);
+      });
 
     //show full form on button click
     // console.log("e.target", event.target)
@@ -131,7 +145,18 @@ const App = () => {
         })
         .catch((error) => {
           alert(`already removed user ${name} from server`);
+          console.log(`issue removing person`, error.response.data.error);
+          setNotificationMessage(`${error.response.data.error}`);
+          setNotificationIsError(true);
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationIsError(false);
+          }, 5000);
         });
+        
+      // .catch((error) => {
+      //   alert(`already removed user ${name} from server`);
+      // });
     }
   };
 
@@ -142,15 +167,25 @@ const App = () => {
     const updatedPerson = { ...person, important: !person.important };
     console.log("updPerson", updatedPerson);
 
-    personService.update(id, updatedPerson).then((changedPerson) => {
-      setPersons(
-        persons.map((person) => (person.id === id ? changedPerson : person))
-      );
-    });
-
-    // personService.update(id, updatedPerson).then(response =>{
-    //   console.log(`id ${id} updPerson: ${updatedPerson}`)
-    // })
+    personService
+      .update(id, updatedPerson)
+      .then((changedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id === id ? changedPerson : person))
+        );
+      })
+      .catch((error) => {
+        console.log(
+          `issue toggling person.importance`,
+          error.response.data.error
+        );
+        setNotificationMessage(`${error.response.data.error}`);
+        setNotificationIsError(true);
+        setTimeout(() => {
+          setNotificationMessage(null);
+          setNotificationIsError(false);
+        }, 5000);
+      });
   };
 
   const updateName = (event) => {
@@ -172,7 +207,10 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification text={notificationMessage} isErrorMessage={notificationIsError}/>
+      <Notification
+        text={notificationMessage}
+        isErrorMessage={notificationIsError}
+      />
 
       <SearchFilter
         filterPersons={filterPersons}
