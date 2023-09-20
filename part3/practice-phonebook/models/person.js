@@ -19,7 +19,17 @@ const personSchema = new mongoose.Schema({
     minLength: 2,
     required: true
   },
-  number: String,
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: (v) => {
+        return /^\d{2,3}-\d{7}$/.test(v)
+      },
+      message: (props) => `${props.value} is not a valid phone number format of xx-xxxxxxx or xxx-xxxxxxx`
+    },
+    required: [true, `User phone number required`] //message displays if number missing since is required
+  },
   important: Boolean,
 });
 
