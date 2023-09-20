@@ -38,13 +38,13 @@ app.use(
 const Person = require("./models/person");
 
 //GET with mongoDB
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (_req, res) => {
   Person.find({}).then((persons) => {
     res.json(persons);
   });
 });
 
-app.get("/info", (req, res) => {
+app.get("/info", (_req, res) => {
   const currentDate = new Date();
   Person.find({}).then((persons) => {
     res.send(`<p>Phonebook has info for ${persons.length} people</p>
@@ -52,7 +52,7 @@ app.get("/info", (req, res) => {
   });
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
       if (person) {
@@ -126,13 +126,13 @@ app.put("/api/persons/:id", (req, res, next) => {
 });
 
 //handler of request with unknown endpoint
-const unknownEndpoint = (req, res) => {
+const unknownEndpoint = (_req, res) => {
   res.status(404).send({ error: "unknown endpoint" });
 };
 app.use(unknownEndpoint);
 
 //handler of request with result of error(s)
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, _req, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {

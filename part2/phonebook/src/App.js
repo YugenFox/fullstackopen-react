@@ -201,7 +201,7 @@ const App = () => {
   };
 
   const shownPeople = persons.filter((person) =>
-    person.name.toLowerCase().startsWith(filterPersons)
+    person.name.toLowerCase().startsWith(filterPersons.toLowerCase())
   );
 
   return (
